@@ -1,0 +1,41 @@
+{
+  "name": "Love-Never-Stray",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --ext .jsx,.js . --fix . --cache",
+    "precommit-msg": "echo 'Pre-commit checks...' && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TsaiTsaiChieh/Love-Never-Stray.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TsaiTsaiChieh/Love-Never-Stray/issues"
+  },
+  "homepage": "https://github.com/TsaiTsaiChieh/Love-Never-Stray#readme",
+  "dependencies": {
+    "axios": "0.20.0",
+    "domain-haven": "0.0.111",
+    "dotenv": "8.2.0",
+    "express": "4.17.1",
+    "pre-commit": "1.2.2"
+  },
+  "devDependencies": {
+    "eslint": "7.9.0",
+    "eslint-config-standard": "14.1.1",
+    "eslint-plugin-import": "2.22.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-standard": "4.0.1"
+  },
+  "pre-commit": [
+    "lint",
+    "precommit-msg"
+  ]
+}
