@@ -30,6 +30,7 @@ const { appPort } = process.env;
 // Create a new express application instance
 const app = express_1.default();
 app.use(domain_haven_1.default());
+app.use('/api', require('./src/routes/index'));
 app.listen(appPort, function() {
   console.log(`Love-Never-Stray on port: ${appPort}`);
 });
