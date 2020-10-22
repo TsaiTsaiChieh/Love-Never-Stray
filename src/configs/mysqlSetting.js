@@ -1,9 +1,6 @@
 const { Sequelize } = require('sequelize');
-const path = require('path');
-const fs = require('fs');
-const { db, username, password, host, mysqlPort, certPath, keyPath, caPath } = process.env;
+const { db, username, password, host, mysqlPort } = process.env;
 
-console.log(__dirname);
 const mysql = new Sequelize(db, username, password, {
   host: host,
   dialect: 'mysql',
@@ -16,12 +13,12 @@ const mysql = new Sequelize(db, username, password, {
   },
   dialectOptions: {
     // socketPath: '',
-    ssl: {
-      key: fs.readFileSync(path.join(__dirname, keyPath)),
-      cert: fs.readFileSync(path.join(__dirname, certPath)),
-      ca: fs.readFileSync(path.join(__dirname, caPath)),
-      connectTimeout: 60000
-    }
+    // ssl: {
+    //   key: fs.readFileSync(path.join(__dirname, keyPath)),
+    //   cert: fs.readFileSync(path.join(__dirname, certPath)),
+    //   ca: fs.readFileSync(path.join(__dirname, caPath)),
+    //   connectTimeout: 60000
+    // }
   },
   logging: false,
   timezone: '+08:00'
