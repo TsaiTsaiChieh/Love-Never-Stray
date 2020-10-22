@@ -5,8 +5,8 @@ const { mysql } = require('../configs/mysqlSetting');
 
 router.get('/', async function(req, res) {
   try {
-    const { db, username, password, host, mysqlPort } = process.env;
-    console.log(db, username, password, host, mysqlPort);
+    const { db, mysqlUsername, mysqlPassword, host, mysqlPort } = process.env;
+    console.log(db, mysqlUsername, mysqlPassword, host, mysqlPort);
     await mysql.authenticate();
     res.send('Connection has been established successfully.');
   } catch (err) {
