@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.get('/', async function(req, res) {
   await Pet.sync({ force: true });
-  res.json('Hello, my ec2');
+  res.json('Hello, my test');
 });
 
 module.exports = router;
