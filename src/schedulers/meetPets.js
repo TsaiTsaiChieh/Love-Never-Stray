@@ -8,11 +8,13 @@ const { statusMapping, areaMapping, ageMapping, ligationMapping } = require('../
 
 async function main() {
   try {
-    // const { petTypes, petLastPages } = await getPetsLastPage();
-    // const petIds = await getPetIds(petTypes, petLastPages);
-    const petIds = ['76502'];
-    const data = await getPetInformation(petIds);
-    console.log(data);
+    const { petTypes, petLastPages } = await getPetsLastPage();
+    const petIds = await getPetIds(petTypes, petLastPages);
+    // console.log(petIds);
+    const a = petIds.splice(0, 5);
+    // const petIds = ['76502'];
+    const data = await getPetInformation(a);
+    console.log(data, '??');
     // const a = await upsertPetTable(data);
 
     return Promise.resolve();
@@ -21,23 +23,23 @@ async function main() {
   }
 }
 
-// async function getPetsLastPage() {
-//   try {
-//     const petTypes = ['cat', 'dog'];
-//     const petLastPages = [];
+async function getPetsLastPage() {
+  try {
+    const petTypes = ['cat', 'dog'];
+    const petLastPages = [];
 
-//     for (let i = 0; i < petTypes.length; i++) {
-//       const type = petTypes[i];
-//       const URL = `${meetPets_URL}/pets/${type}`;
-//       const $ = await loadData(URL);
-//       const lastPage = Number($('.pager-list > .pager-last').text());
-//       petLastPages.push(lastPage);
-//     }
-//     return Promise.resolve({ petTypes, petLastPages });
-//   } catch (err) {
-//     return Promise.reject(new ServerErrors.CheerioError(err.stack));
-//   }
-// }
+    for (let i = 0; i < petTypes.length; i++) {
+      const type = petTypes[i];
+      const URL = `${meetPets_URL}/pets/${type}`;
+      const $ = await loadData(URL);
+      const lastPage = Number($('.pager-list > .pager-last').text());
+      petLastPages.push(lastPage);
+    }
+    return Promise.resolve({ petTypes, petLastPages });
+  } catch (err) {
+    return Promise.reject(new ServerErrors.CheerioError(err.stack));
+  }
+}
 
 async function loadData(URL) {
   try {
@@ -49,49 +51,50 @@ async function loadData(URL) {
   }
 }
 
-// async function getPetIds(petTypes, petLastPages) {
-//   try {
-//     const petIds = [];
-//     for (let i = 0; i < petTypes.length; i++) {
-//       const type = petTypes[i];
-//       const lastPage = petLastPages[i];
-//       for (let j = 0; j < lastPage; j++) {
-//         const URL = `${meetPets_URL}/pets/${type}?page=${j}`;
-//         const $ = await loadData(URL);
-//         const titles = $('.view-data-node-title a');
-//         titles.each(function(idx, ele) {
-//           const petId = ele.attribs.href.replace('/content/', '');
-//           petIds.push(petId);
-//         });
-//       }
-//     }
-//     return Promise.resolve(petIds);
-//   } catch (err) {
-//     return Promise.reject(new ServerErrors.GetDataFromURL(err.stack));
-//   }
-// }
+async function getPetIds(petTypes, petLastPages) {
+  try {
+    const petIds = [];
+    for (let i = 0; i < petTypes.length; i++) {
+      const type = petTypes[i];
+      const lastPage = petLastPages[i];
+      for (let j = 0; j < lastPage; j++) {
+        const URL = `${meetPets_URL}/pets/${type}?page=${j}`;
+        const $ = await loadData(URL);
+        const titles = $('.view-data-node-title a');
+        titles.each(function(idx, ele) {
+          const petId = ele.attribs.href.replace('/content/', '');
+          petIds.push(petId);
+        });
+      }
+    }
+    return Promise.resolve(petIds);
+  } catch (err) {
+    return Promise.reject(new ServerErrors.GetDataFromURL(err.stack));
+  }
+}
 
 async function getPetInformation(petIds) {
   try {
     const data = [];
-    await Promise.all(petIds.map(async function(petId, idx) {
-      // later(idx, async function() {
-      //   const URL = `${meetPets_URL}/content/${petId}`;
-      //   const $ = await loadData(URL);
-      //   const result = await repackagePetInformation($, petId);
-      //   data.push(result);
-      // });
-      setTimeout(async function() {
+    petIds.map(async function(petId, idx) {
+      let currentIdx = 0;
+      const intervalId = setInterval(async function() {
         const URL = `${meetPets_URL}/content/${petId}`;
         const $ = await loadData(URL);
         const result = await repackagePetInformation($, petId);
         data.push(result);
-      }, idx * 1000);
-    }));
-
-    return Promise.resolve(data);
+        currentIdx++;
+        console.log(currentIdx, petIds.length);
+        if (currentIdx === petIds.length) {
+          clearInterval(intervalId);
+          console.log(data, '---');
+          // return Promise.resolve(data);
+          return data;
+        }
+      }, 500);
+    });
+    // return Promise.resolve(data);
   } catch (err) {
-    console.log('...', err);
     return Promise.reject(new ServerErrors.GetDataFromURL(err.stack));
   }
 }
