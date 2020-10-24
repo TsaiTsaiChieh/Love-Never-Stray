@@ -23,7 +23,21 @@ class CheerioError extends ExtendableError {
     super(message, status, isPublic, code);
   }
 }
+
+class RepackageError extends ExtendableError {
+  constructor(message, status = 500002, isPublic = true, code = INTERNAL_SERVER_ERROR) {
+    super(message, status, isPublic, code);
+  }
+}
+
+class MySQLError extends ExtendableError {
+  constructor(message, status = 500003, isPublic = true, code = INTERNAL_SERVER_ERROR) {
+    super(message, status, isPublic, code);
+  }
+}
 module.exports = {
   GetDataFromURL,
-  CheerioError
+  CheerioError,
+  RepackageError,
+  MySQLError
 };
