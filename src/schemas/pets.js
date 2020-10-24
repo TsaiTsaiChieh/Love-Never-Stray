@@ -3,6 +3,7 @@ const { mysql } = require('../configs/mysqlSetting');
 
 const Pet = mysql.define('pet', {
   id: { type: Sequelize.INTEGER, allowNull: false, autoIncrement: true, primaryKey: true },
+  name: { type: Sequelize.STRING(128), comment: '寵物名' },
   ref: { type: Sequelize.ENUM, values: ['gov', 'map', 'own'], comment: '資料來源' },
   area_id: { type: Sequelize.INTEGER(4), comment: '所屬縣市代碼' },
   kind: { type: Sequelize.STRING(16), comment: '寵物種類' },
@@ -17,9 +18,7 @@ const Pet = mysql.define('pet', {
   remark: { type: Sequelize.STRING, comment: '資料備註（文字描述）' },
   address: { type: Sequelize.STRING },
   phone: { type: Sequelize.STRING(16) },
-  image: { type: Sequelize.JSON },
-  source_update_time: { type: Sequelize.DATE, comment: '來源的更新時間' },
-  source_create_time: { type: Sequelize.DATE, comment: '來源的建立時間' }
+  image: { type: Sequelize.JSON }
 });
 
 module.exports = Pet;
