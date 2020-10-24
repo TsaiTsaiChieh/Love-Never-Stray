@@ -11,9 +11,9 @@ async function main() {
     const { petTypes, petLastPages } = await getPetsLastPage();
     const petIds = await getPetIds(petTypes, petLastPages);
     console.log(petIds);
-    const a = petIds.splice(0, 10);
+    // const a = petIds.splice(0, 5);
     // const petIds = ['76502'];
-    const data = await getPetInformation(a);
+    const data = await getPetInformation(petIds);
     console.log(data, '??');
     // const a = await upsertPetTable(data);
 
@@ -77,10 +77,10 @@ async function getPetInformation(petIds) {
   return new Promise(function(resolve, reject) {
     try {
       const data = [];
-      for (let i = 0; i < petIds.length; i++) {
-        const petId = petIds[i];
-        let currentIdx = 0;
-        const intervalId = setInterval(async function() {
+      let currentIdx = 0;
+      const intervalId = setInterval(async function() {
+        for (let i = 0; i < petIds.length; i++) {
+          const petId = petIds[i];
           const URL = `${meetPets_URL}/content/${petId}`;
           const $ = await loadData(URL);
           const result = await repackagePetInformation($, petId);
@@ -91,8 +91,8 @@ async function getPetInformation(petIds) {
             clearInterval(intervalId);
             return resolve(data);
           }
-        }, 1000);
-      }
+        }
+      }, 1000);
     } catch (err) {
       // return Promise.reject(new ServerErrors.GetDataFromURL(err.stack));
       return reject(new ServerErrors.GetDataFromURL(err.stack));
