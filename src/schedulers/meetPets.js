@@ -10,8 +10,8 @@ async function main() {
   try {
     const { petTypes, petLastPages } = await getPetsLastPage();
     const petIds = await getPetIds(petTypes, petLastPages);
-    // console.log(petIds);
-    const a = petIds.splice(0, 5);
+    console.log(petIds);
+    const a = petIds.splice(0, 10);
     // const petIds = ['76502'];
     const data = await getPetInformation(a);
     console.log(data, '??');
@@ -74,29 +74,30 @@ async function getPetIds(petTypes, petLastPages) {
 }
 
 async function getPetInformation(petIds) {
-  try {
-    const data = [];
-    petIds.map(async function(petId, idx) {
-      let currentIdx = 0;
-      const intervalId = setInterval(async function() {
-        const URL = `${meetPets_URL}/content/${petId}`;
-        const $ = await loadData(URL);
-        const result = await repackagePetInformation($, petId);
-        data.push(result);
-        currentIdx++;
-        console.log(currentIdx, petIds.length);
-        if (currentIdx === petIds.length) {
-          clearInterval(intervalId);
-          console.log(data, '---');
-          // return Promise.resolve(data);
-          return data;
-        }
-      }, 500);
-    });
-    // return Promise.resolve(data);
-  } catch (err) {
-    return Promise.reject(new ServerErrors.GetDataFromURL(err.stack));
-  }
+  return new Promise(function(resolve, reject) {
+    try {
+      const data = [];
+      for (let i = 0; i < petIds.length; i++) {
+        const petId = petIds[i];
+        let currentIdx = 0;
+        const intervalId = setInterval(async function() {
+          const URL = `${meetPets_URL}/content/${petId}`;
+          const $ = await loadData(URL);
+          const result = await repackagePetInformation($, petId);
+          data.push(result);
+          currentIdx++;
+          console.log(`${currentIdx}/${petIds.length}`);
+          if (currentIdx === petIds.length) {
+            clearInterval(intervalId);
+            return resolve(data);
+          }
+        }, 1000);
+      }
+    } catch (err) {
+      // return Promise.reject(new ServerErrors.GetDataFromURL(err.stack));
+      return reject(new ServerErrors.GetDataFromURL(err.stack));
+    }
+  });
 }
 
 // async function later(delay, callback) {
