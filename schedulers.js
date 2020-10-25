@@ -9,7 +9,7 @@ const meetPets = require('./src/schedulers/meetPets');
 const app = express();
 app.use(Haven.haven());
 
-scheduler.scheduleJob('*/60 * * * * *', async function() {
+scheduler.scheduleJob('* * 6 * * *', async function() {
   // await COA();
   await meetPets();
 });
