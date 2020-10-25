@@ -19,6 +19,9 @@ const Pet = mysql.define('pet', {
   address: { type: Sequelize.STRING },
   phone: { type: Sequelize.STRING(16) },
   image: { type: Sequelize.JSON }
+},
+{
+  indexes: [{ fields: ['ref'] }]
 });
 
 module.exports = Pet;
