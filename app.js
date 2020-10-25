@@ -11,3 +11,5 @@ app.use('/connection_mysql', require('./src/routes/connection'));
 app.listen(appPort, function() {
   console.log(`Love-Never-Stray on port: ${appPort}`);
 });
+
+module.exports = app;
