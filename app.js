@@ -7,6 +7,7 @@ const app = express();
 app.use(Haven.haven());
 
 app.use('/api', require('./src/routes/index'));
+app.use('/adoption', require('./src/routes/adoption'));
 app.use('/connection_mysql', require('./src/routes/connection'));
 app.listen(appPort, function() {
   console.log(`Love-Never-Stray on port: ${appPort}`);
