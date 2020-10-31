@@ -4,8 +4,9 @@ const ServerErrors = require('../helpers/ServerErrors');
 const { Pet } = require('../schemas/pets');
 const { meetPets_URL } = process.env;
 const className = '.field-field';
-const { petStatus, statusMapping, areaMapping, ageMapping, ligationMapping } = require('../helpers/mapping');
+const { petStatus, SEX, statusMapping, areaMapping, ageMapping, ligationMapping } = require('../helpers/mapping');
 const { upsertPetTable } = require('../helpers/databaseEngine');
+const duration = 100;
 
 async function main() {
   try {
@@ -102,7 +103,7 @@ async function getPetInformation(petIds) {
           clearInterval(intervalId);
           return resolve(data);
         }
-      }, 100);
+      }, duration);
     } catch (err) {
       return reject(new ServerErrors.GetDataFromURL(err.stack));
     }
@@ -116,18 +117,20 @@ async function repackagePetInformation($, petId) {
     $(`${className}-pets-image`).children('.field-items').children('.field-item').each(function(idx, ele) {
       images.push((ele.children[0].attribs.src));
     });
+    const remark = textReplace($, 'pet-habitate', '動物個性略述');
     const data = {
       id: petId,
       ref: 'map',
       status: statusMapping(title),
-      title,
+      title: title,
       kind: textReplace($, 'pets-type', '動物種類') === '貓咪' ? '貓' : '狗',
+      sex: sexSensor(remark),
       name: textReplace($, 'pet-name', '動物小名'),
       area_id: areaMapping(textReplace($, 'county', '所在縣市')),
       found_place: textReplace($, 'filed-county-area', '所在 區 / 市 / 鎮 / 鄉 (行政區)'),
       age: ageMapping(textReplace($, 'pet-age', '動物的出生日（年齡）')),
       ligation: ligationMapping(textReplace($, 'pet-medical', '結紮情況')),
-      remark: textReplace($, 'pet-habitate', '動物個性略述'),
+      remark: remark,
       image: images,
       address: textReplace($, 'contact', '聯絡人'),
       phone: textReplace($, 'tel', '電話/聯絡方式')
@@ -140,6 +143,12 @@ async function repackagePetInformation($, petId) {
 
 function textReplace($, name, replace) {
   return $(`${className}-${name}`).text().replace(`${replace}:`, '').trim();
+}
+
+function sexSensor(remark) {
+  if (remark.includes('母') || remark.includes('妹妹') || remark.includes('女') || remark.includes('公主') || remark.includes('姐') || remark.includes('姊')) return SEX.FEMALE;
+  else if (remark.includes('公') || remark.includes('弟') || remark.includes('帥') || remark.includes('男') || remark.includes('王子')) return SEX.MALE;
+  return SEX.NONE;
 }
 
 function updatePetStatus(idFromMySQL, data) {

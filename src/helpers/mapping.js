@@ -6,6 +6,11 @@ const petStatus = {
   DEAD: -1
 };
 
+const SEX = {
+  NONE: -1,
+  FEMALE: 0,
+  MALE: 1
+};
 function statusMapping(title) {
   if (title.includes('已送養') || title.includes('已送出') || title.includes('已去新家') || title.includes('已出養') ||
   title.includes('已認養') || title.includes('已領養') || title.includes('已被') || title.includes('已經找到') ||
@@ -77,6 +82,7 @@ function ligationMapping(str) {
 }
 module.exports = {
   statusMapping,
+  SEX,
   petStatus,
   areaMapping,
   ageMapping,
