@@ -1,5 +1,5 @@
 const ServerErrors = require('./ServerErrors');
-const Pet = require('../schemas/pets');
+const { Pet } = require('../schemas/pets');
 
 async function upsertPetTable(data) {
   try {

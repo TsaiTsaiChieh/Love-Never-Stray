@@ -1,7 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const ServerErrors = require('../helpers/ServerErrors');
-const Pet = require('../schemas/pets');
+const { Pet } = require('../schemas/pets');
 const { meetPets_URL } = process.env;
 const className = '.field-field';
 const { petStatus, statusMapping, areaMapping, ageMapping, ligationMapping } = require('../helpers/mapping');
