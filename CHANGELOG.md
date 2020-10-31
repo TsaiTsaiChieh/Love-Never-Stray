@@ -1,5 +1,6 @@
 ## [Unreleased]
 #### Add:
+-  sexSensor function to detect sex ***by TsaiTsaiChieh*** [#10](https://github.com/TsaiTsaiChieh/Love-Never-Stray/pull/10)
 -  adoption/search API ***by TsaiTsaiChieh*** [#7](https://github.com/TsaiTsaiChieh/Love-Never-Stray/pull/7)
 -  meet pet scheduler ***by TsaiTsaiChieh*** [#5](https://github.com/TsaiTsaiChieh/Love-Never-Stray/pull/5)
 #### Change: 
