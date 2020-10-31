@@ -22,6 +22,7 @@ module.exports = {
     'block-spacing': 0,
     'space-before-function-paren': ['error', 'never'],
     semi: ['error', 'always'],
-    'no-useless-escape': 0
+    'no-useless-escape': 0,
+    'no-prototype-builtins': 'off'
   }
 };
