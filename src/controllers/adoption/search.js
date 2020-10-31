@@ -35,7 +35,7 @@ async function controller(req, res) {
     }
   };
 
-  req.query.page = parseInt(req.query.page);
+  req.query.page = isNaN(parseInt(req.query.page)) ? 0 : parseInt(req.query.page);
   const valid = ajv.validate(schema, req.query);
   if (!valid) return res.status(BAD_REQUEST).json(ajv.errors);
   try {

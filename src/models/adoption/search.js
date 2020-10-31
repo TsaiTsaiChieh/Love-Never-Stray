@@ -53,10 +53,6 @@ async function searchPets(query) {
           raw: true
         });
     } else {
-      console.log(`SELECT * 
-      FROM pets
-           ${condition}
-  ORDER BY updatedAt ${query.updatedAt}`);
       result = await mysql.query(
         `SELECT * 
            FROM pets
@@ -87,8 +83,6 @@ function queryConcat(query) {
     concat = concat.substring(0, concat.length - 4);
     concat = 'WHERE ' + concat;
   }
-  // if (query.hasOwnProperty('updatedAt')) concat += `ORDER BY updatedAt ${query.updatedAt}`;
-  console.log(concat, '??');
   return concat;
 }
 
