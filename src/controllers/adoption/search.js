@@ -18,7 +18,7 @@ async function controller(req, res) {
         type: 'string',
         enum: ['0', '1']
       },
-      time: {
+      updatedAt: {
         type: 'string',
         enum: ['DESC', 'ASC'],
         default: 'ASC'
@@ -29,6 +29,7 @@ async function controller(req, res) {
       }
     }
   };
+
   const valid = ajv.validate(schema, req.query);
   if (!valid) return res.status(BAD_REQUEST).json(ajv.errors);
   try {
