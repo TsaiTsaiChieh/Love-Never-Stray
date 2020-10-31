@@ -1,6 +1,7 @@
 const { QueryTypes } = require('sequelize');
 const { mysql } = require('../../configs/mysqlSetting');
 const ServerErrors = require('../../helpers/ServerErrors');
+const limit = 20;
 
 async function model(args) {
   try {
@@ -16,10 +17,8 @@ function queriesProcessor(args) {
   const Args = {};
   for (const key in args) {
     if (key === 'kind') Args[key] = kindMapping(args[key]);
-    if (key === 'sex') Args[key] = Number(args[key]);
-    if (key === 'age') Args[key] = Number(args[key]);
-    if (key === 'region') Args[key] = args[key];
-    if (key === 'updatedAt') Args[key] = args[key];
+    if (key === 'sex' || key === 'age') Args[key] = Number(args[key]);
+    if (key === 'region' || key === 'page' || key === 'updatedAt') Args[key] = args[key];
   }
   return Args;
 }
@@ -37,22 +36,34 @@ function kindMapping(kind) {
 
 async function searchPets(query) {
   try {
-    const condition = queryConcat(query);
     let result = [];
+    const condition = queryConcat(query.updatedAt);
+    const offset = query.page * limit;
+
     if (query.hasOwnProperty('region')) {
       result = await mysql.query(
         `SELECT * 
            FROM pets
       LEFT JOIN regions ON regions.fk_area_id = pets.area_id
-          WHERE ${condition}`, {
+                ${condition}
+       ORDER BY updatedAt ${query.updatedAt}
+          LIMIT :limit OFFSET :offset`, {
+          replacements: { limit, offset },
           type: QueryTypes.SELECT,
           raw: true
         });
     } else {
+      console.log(`SELECT * 
+      FROM pets
+           ${condition}
+  ORDER BY updatedAt ${query.updatedAt}`);
       result = await mysql.query(
         `SELECT * 
            FROM pets
-          WHERE ${condition}`, {
+                ${condition}
+       ORDER BY updatedAt ${query.updatedAt}
+          LIMIT :limit OFFSET :offset`, {
+          replacements: { limit, offset },
           type: QueryTypes.SELECT,
           raw: true
         });
@@ -72,8 +83,12 @@ function queryConcat(query) {
     if (key === 'age') concat += `(${key} = ${query[key]} OR ${key} = -1) AND `;
     if (key === 'region') concat += `${key} = '${query[key]}' AND `;
   }
-  concat = concat.substring(0, concat.length - 4);
-  if (query.hasOwnProperty('updatedAt')) concat += `ORDER BY updatedAt ${query.updatedAt}`;
+  if (concat.length) {
+    concat = concat.substring(0, concat.length - 4);
+    concat = 'WHERE ' + concat;
+  }
+  // if (query.hasOwnProperty('updatedAt')) concat += `ORDER BY updatedAt ${query.updatedAt}`;
+  console.log(concat, '??');
   return concat;
 }
 

@@ -18,6 +18,10 @@ async function controller(req, res) {
         type: 'string',
         enum: ['0', '1']
       },
+      page: {
+        type: 'integer',
+        default: 0
+      },
       updatedAt: {
         type: 'string',
         enum: ['DESC', 'ASC'],
@@ -27,9 +31,11 @@ async function controller(req, res) {
         type: 'string',
         enum: ['N', 'M', 'S', 'E', 'O']
       }
+
     }
   };
 
+  req.query.page = parseInt(req.query.page);
   const valid = ajv.validate(schema, req.query);
   if (!valid) return res.status(BAD_REQUEST).json(ajv.errors);
   try {
