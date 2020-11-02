@@ -11,6 +11,7 @@ const SEX = {
   FEMALE: 0,
   MALE: 1
 };
+
 function statusMapping(title) {
   if (title.includes('已送養') || title.includes('已送出') || title.includes('已去新家') || title.includes('已出養') ||
   title.includes('已認養') || title.includes('已領養') || title.includes('已被') || title.includes('已經找到') ||
@@ -20,6 +21,21 @@ function statusMapping(title) {
     return petStatus.OTHER;
   }
   return petStatus.OPEN;
+}
+
+function petStatusFromCOA(status) {
+  switch (status) {
+    case 'OPEN':
+      return petStatus.OPEN;
+    case 'ADOPTED':
+      return petStatus.ADOPTED;
+    case 'OTHER':
+      return petStatus.OTHER;
+    case 'DEAD':
+      return petStatus.DEAD;
+    default:
+      throw new Error(status, '?');
+  }
 }
 
 function areaMapping(area) {
@@ -80,11 +96,28 @@ function ageMapping(str) {
 function ligationMapping(str) {
   return str.includes('否') ? 0 : 1;
 }
+
+function ternaryMapping(value) {
+  switch (value) {
+    case 'M':
+    case 'T':
+    case 'ADULT':
+      return 1;
+    case 'F':
+    case 'CHILD':
+      return 0;
+    default:
+      return -1;
+  }
+}
+
 module.exports = {
   statusMapping,
   SEX,
   petStatus,
+  petStatusFromCOA,
   areaMapping,
   ageMapping,
-  ligationMapping
+  ligationMapping,
+  ternaryMapping
 };
