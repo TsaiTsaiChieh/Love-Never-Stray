@@ -1,18 +1,17 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const ServerErrors = require('../helpers/ServerErrors');
-const { Pet } = require('../schemas/pets');
 const { meetPets_URL } = process.env;
 const className = '.field-field';
-const { petStatus, SEX, statusMapping, areaMapping, ageMapping, ligationMapping } = require('../helpers/mapping');
-const { upsertPetTable } = require('../helpers/databaseEngine');
+const { SEX, statusMapping, areaMapping, ageMapping, ligationMapping } = require('../helpers/mapping');
+const { upsertPetTable, getPetIdsFromMySQL, updatePetStatus } = require('../helpers/databaseEngine');
 const duration = 100;
 
 async function main() {
   try {
     const { petTypes, petLastPages } = await getPetsLastPage();
     const petIds = await getPetIds(petTypes, petLastPages);
-    const petIdsFromMySQL = await getPetIdsFromMySQL();
+    const petIdsFromMySQL = await getPetIdsFromMySQL('map');
     await updatePetStatus(petIdsFromMySQL, petIds);
     const data = await getPetInformation(petIds);
     await upsertPetTable(data);
@@ -37,7 +36,7 @@ async function getPetsLastPage() {
     }
     return Promise.resolve({ petTypes, petLastPages });
   } catch (err) {
-    return Promise.reject(new ServerErrors.CheerioError(err.stack));
+    return Promise.reject(new ServerErrors.GetDataFromURL(err.stack));
   }
 }
 
@@ -62,7 +61,7 @@ async function getPetIds(petTypes, petLastPages) {
         const $ = await loadData(URL);
         const titles = $('.view-data-node-title a');
         titles.each(function(idx, ele) {
-          const petId = ele.attribs.href.replace('/content/', '');
+          const petId = Number(ele.attribs.href.replace('/content/', ''));
           petIds.push(petId);
         });
       }
@@ -70,19 +69,6 @@ async function getPetIds(petTypes, petLastPages) {
     return Promise.resolve(petIds);
   } catch (err) {
     return Promise.reject(new ServerErrors.GetDataFromURL(err.stack));
-  }
-}
-
-async function getPetIdsFromMySQL() {
-  try {
-    const result = await Pet.findAll({
-      attributes: ['id'],
-      where: { ref: 'map' },
-      raw: true
-    });
-    return Promise.resolve(result);
-  } catch (err) {
-    return Promise.reject(new ServerErrors.MySQLError(err.stack));
   }
 }
 
@@ -149,19 +135,6 @@ function sexSensor(remark) {
   if (remark.includes('母') || remark.includes('妹妹') || remark.includes('女') || remark.includes('公主') || remark.includes('姐') || remark.includes('姊')) return SEX.FEMALE;
   else if (remark.includes('公') || remark.includes('弟') || remark.includes('帥') || remark.includes('男') || remark.includes('王子')) return SEX.MALE;
   return SEX.NONE;
-}
-
-function updatePetStatus(idFromMySQL, data) {
-  try {
-    idFromMySQL.map(async function(ele) {
-      if (!data.includes(String(ele.id))) {
-        await Pet.update({ status: petStatus.NONE }, { where: { id: ele.id } });
-      }
-    });
-    return Promise.resolve();
-  } catch (err) {
-    return Promise.reject(new ServerErrors.MySQLError(err.stack));
-  }
 }
 
 module.exports = main;

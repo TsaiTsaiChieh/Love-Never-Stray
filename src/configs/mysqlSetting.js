@@ -9,7 +9,9 @@ const mysql = new Sequelize(db, mysqlUsername, mysqlPassword, {
   pool: {
     maxConnections: 10,
     minConnections: 0,
-    maxIdleTime: 30000
+    maxIdleTime: 600000,
+    acquire: 600000,
+    idle: 600000
   },
   dialectOptions: {
     // socketPath: '',

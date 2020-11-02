@@ -18,26 +18,19 @@ class GetDataFromURL extends ExtendableError {
   }
 }
 
-class CheerioError extends ExtendableError {
+class RepackageError extends ExtendableError {
   constructor(message, status = 500001, isPublic = true, code = INTERNAL_SERVER_ERROR) {
     super(message, status, isPublic, code);
   }
 }
 
-class RepackageError extends ExtendableError {
-  constructor(message, status = 500002, isPublic = true, code = INTERNAL_SERVER_ERROR) {
-    super(message, status, isPublic, code);
-  }
-}
-
 class MySQLError extends ExtendableError {
-  constructor(message, status = 500003, isPublic = true, code = INTERNAL_SERVER_ERROR) {
+  constructor(message, status = 500002, isPublic = true, code = INTERNAL_SERVER_ERROR) {
     super(message, status, isPublic, code);
   }
 }
 module.exports = {
   GetDataFromURL,
-  CheerioError,
   RepackageError,
   MySQLError
 };
